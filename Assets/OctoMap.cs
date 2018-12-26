@@ -17,6 +17,7 @@ public class OctoMap : MonoBehaviour {
                     temp.transform.parent = this.transform;
                     temp.transform.localPosition = new Vector3(1.0f*x, 1.0f * y, 1.0f * z);
                     temp.GetComponent<Renderer>().material = material;
+                    if (x == x_size || y == y_size || z == z_size) temp.GetComponent<CubeSpace>().Occupied = true;
                     temp.GetComponent<CubeSpace>().ID = new Vector3(x, y, z);
                 }
 

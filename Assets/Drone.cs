@@ -5,12 +5,16 @@ using UnityEngine;
 public class Drone : MonoBehaviour {
     public List<GameObject> PoCA; 
     public int targetindex;
-	public Vector3 P,D;
-    public float kP, kD, kF1, kF;
+	public Vector3 P,I,D;
+    public float kP, kD, kI , kF1, kF;
     public Vector3 last_post;
     public GameObject Dot;
     public Vector3 force;
     public List<GameObject> obstacles;
+    public GameObject Probe;
+    public ColideProbe probe;
+    public List<GameObject> RandomSub;
+    public GameObject TempPath;
     // Use this for initialization
 	void Start () {
         last_post = transform.position;
@@ -18,7 +22,34 @@ public class Drone : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Go();
+
+        if(probe.Clear() && TempPath == null)
+        {
+            Go();
+            ProbeAt(PoCA[targetindex].transform.position);
+        }
+        else
+        {
+            if(TempPath==null)
+            {
+                TempPath = Instantiate(Dot);
+                TempPath.transform.position = transform.position + new Vector3(Random.Range(-1,1), Random.Range(-1, 1), Random.Range(-1, 1));
+                ProbeAt(TempPath.transform.position);
+            }
+            else if(!probe.Clear())
+            {
+                Destroy(TempPath);
+                TempPath = Instantiate(Dot);
+                TempPath.transform.position = transform.position + new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
+                ProbeAt(TempPath.transform.position);
+            }
+
+
+        }
+    }
+
+    private void FixedUpdate()
+    {
     }
 
     public void Go()
@@ -27,11 +58,12 @@ public class Drone : MonoBehaviour {
         D = transform.position - last_post;
         last_post = transform.position;
 
-        transform.position += kP * P - kD * D;
-        GameObject temp = Instantiate(Dot);
-        temp.transform.position = transform.position;
 
-        if(P.sqrMagnitude<0.1 && targetindex < PoCA.Count-1)
+        transform.position += kP * P - kD * D;
+        //GameObject temp = Instantiate(Dot);
+        //temp.transform.position = transform.position;
+
+        if (P.sqrMagnitude<0.05 && targetindex < PoCA.Count-1)
         {
             targetindex++;
         }
@@ -66,7 +98,14 @@ public class Drone : MonoBehaviour {
         }
     }
 
-    
+    public void ProbeAt(Vector3 target)
+    {
+        Probe.transform.localScale = new Vector3(1, 1, (target - transform.position).magnitude);
+        if((target - transform.position).magnitude!=0)
+            Probe.transform.localRotation = Quaternion.LookRotation(target - transform.position);
+    }
+
+
     private void OnGUI()
     {
     }
