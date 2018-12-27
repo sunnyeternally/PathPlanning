@@ -15,44 +15,37 @@ public class Drone : MonoBehaviour {
     public ColideProbe probe;
     public List<GameObject> RandomSub;
     public GameObject TempPath;
+    public DrawCurve curve;
+    public RRTSolver rrtsolver;
+    
     // Use this for initialization
 	void Start () {
         last_post = transform.position;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
 
-        if(probe.Clear() && TempPath == null)
+    // Update is called once per frame
+    void FixedUpdate() {
+        if (Time.time > 0.1f)
         {
-            Go();
-            ProbeAt(PoCA[targetindex].transform.position);
-        }
-        else
-        {
-            if(TempPath==null)
-            {
-                TempPath = Instantiate(Dot);
-                TempPath.transform.position = transform.position + new Vector3(Random.Range(-1,1), Random.Range(-1, 1), Random.Range(-1, 1));
-                ProbeAt(TempPath.transform.position);
+            if(!probe.wait)
+            { 
+                if (probe.Clear())
+                {
+                    GoDirect();
+                    //curve.makeCurve(this.transform.position, this.transform.position, PoCA[targetindex].transform.position, PoCA[targetindex].transform.position, 20);
+                    ProbeAt(PoCA[targetindex].transform.position);
+                }
+                else
+                {
+                    if (!rrtsolver.solving)
+                        rrtsolver.Solve(this.transform.position, PoCA[targetindex].transform.position);
+                }
             }
-            else if(!probe.Clear())
-            {
-                Destroy(TempPath);
-                TempPath = Instantiate(Dot);
-                TempPath.transform.position = transform.position + new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
-                ProbeAt(TempPath.transform.position);
-            }
-
-
         }
     }
 
-    private void FixedUpdate()
-    {
-    }
 
-    public void Go()
+    public void GoDirect()
     {
         P = PoCA[targetindex].transform.position - transform.position;
         D = transform.position - last_post;
@@ -103,6 +96,8 @@ public class Drone : MonoBehaviour {
         Probe.transform.localScale = new Vector3(1, 1, (target - transform.position).magnitude);
         if((target - transform.position).magnitude!=0)
             Probe.transform.localRotation = Quaternion.LookRotation(target - transform.position);
+        probe.birth = Time.time;
+        probe.wait = true;
     }
 
 

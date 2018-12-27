@@ -5,8 +5,12 @@ using UnityEngine;
 public class ColideProbe : MonoBehaviour {
     public List<GameObject> Obstacles;
     public bool clear;
+    public bool wait;
+    public float birth;
 	// Use this for initialization
 	void Start () {
+        birth = Time.time; 
+        wait = true;
         Material material = new Material(Shader.Find("Legacy Shaders/Transparent/Diffuse"));
         material.color = new Color(0, 1, 0, 0.25f);
         this.GetComponent<Renderer>().material = material;
@@ -14,7 +18,8 @@ public class ColideProbe : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void FixedUpdate() {
+        if (Time.time - birth>0) wait = false;
         if (Obstacles.Count > 0)
         {
             clear = false;
@@ -30,10 +35,6 @@ public class ColideProbe : MonoBehaviour {
             this.GetComponent<Renderer>().material = material;
         }
         Obstacles.Clear();
-    }
-
-    private void FixedUpdate()
-    {
     }
 
     private void OnTriggerEnter(Collider other)

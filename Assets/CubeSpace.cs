@@ -14,7 +14,10 @@ public class CubeSpace : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if(Occupied==false && Time.time>=0.01f)
+        {
+            Destroy(this.gameObject);
+        }
 	}
 
     private void OnTriggerStay(Collider other)

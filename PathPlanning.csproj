@@ -308,9 +308,14 @@
   <ItemGroup>
     <Compile Include="Assets\ColideProbe.cs" />
     <Compile Include="Assets\CubeSpace.cs" />
+    <Compile Include="Assets\DrawCurve.cs" />
     <Compile Include="Assets\Drone.cs" />
     <Compile Include="Assets\Move.cs" />
     <Compile Include="Assets\OctoMap.cs" />
+    <Compile Include="Assets\RRTNode.cs" />
+    <Compile Include="Assets\RRTNodeToParent.cs" />
+    <Compile Include="Assets\RRTNodeToTarget.cs" />
+    <Compile Include="Assets\RRTSolver.cs" />
     <Compile Include="Assets\Trajectory.cs" />
   </ItemGroup>
   <ItemGroup>
